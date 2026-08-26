@@ -27,7 +27,6 @@ import jenkins.model.Jenkins;
  *
  * @author <a href="mailto:nicolas.deloof@gmail.com">Nicolas De Loof</a>
  */
-@Extension
 public class FastNodeProvisionerStrategy extends Strategy {
 
     private static final Logger LOGGER = Logger.getLogger(FastNodeProvisionerStrategy.class.getName());
