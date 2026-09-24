@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -23,6 +24,7 @@ import hudson.model.Node;
 import hudson.util.Secret;
 import io.jenkins.docker.client.DockerAPI;
 import io.jenkins.docker.connector.DockerComputerAttachConnector;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -187,6 +189,11 @@ class DockerCloudTest {
                 failure,
                 assertThrows(ExecutionException.class, () -> plannedNode.future.get(10, TimeUnit.SECONDS))
                         .getCause());
+        assertTimeoutPreemptively(Duration.ofSeconds(10), () -> {
+            while (cloud.countContainersInProgress() != 0) {
+                Thread.sleep(10);
+            }
+        });
     }
 
     private static void assertCount(
